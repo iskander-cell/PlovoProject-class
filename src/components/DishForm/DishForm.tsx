@@ -1,56 +1,73 @@
-import styles from './styles.module.css'
+import styles from './styles.module.css';
 import { Button, TextField } from '@mui/material';
-import { useState } from 'react';
-import type { IDishShort } from "../../types"
+import { useEffect, useState } from 'react';
+import type { IDishShort } from "../../types";
 import type { ChangeEvent, FormEvent } from 'react';
 
 const INITIAL_FORM_STATE: IDishShort = {
   name: '',
   description: '',
   price: 0
-}
+};
 
 interface Props {
-    onSubmit: (dish: IDishShort) => void
-    loading: boolean
+  onSubmit: (dish: IDishShort) => void;
+  loading: boolean;
+  initialData?: IDishShort;
 }
 
-const DishForm = ({onSubmit, loading}:Props) => {
-  const [formState, setFormState] = useState<IDishShort>(INITIAL_FORM_STATE)
+const DishForm = ({ onSubmit, loading, initialData }: Props) => {
+  const [formState, setFormState] = useState<IDishShort>(
+    initialData || INITIAL_FORM_STATE
+  );
 
-const inputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    const {name, value} = event.target;
-    setFormState(prevState => ({...prevState, [name]: value}));
+  useEffect(() => {
+    if (initialData) {
+      setFormState(initialData);
+    }
+  }, [initialData]);
+
+  const inputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+
+    setFormState(prev => ({
+      ...prev,
+      [name]: name === 'price' ? Number(value) : value
+    }));
   };
 
-const onFormSubmit = (event:FormEvent) => {
-    event.preventDefault()
-    onSubmit(formState)
-  }
-
+  const onFormSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    onSubmit(formState);
+  };
 
   return (
     <form className={styles.form} onSubmit={onFormSubmit}>
       <TextField
-        label={'Dish name'}
+        label="Dish name"
         value={formState.name}
-        name={'name'}
+        name="name"
         onChange={inputChangeHandler}
       />
+
       <TextField
-        label={'Description'}
+        label="Description"
         value={formState.description}
-        name={'description'}
+        name="description"
         onChange={inputChangeHandler}
       />
+
       <TextField
-        label={'Price'}
+        label="Price"
         value={formState.price}
-        name={'price'}
-        type={'number'}
+        name="price"
+        type="number"
         onChange={inputChangeHandler}
       />
-      <Button loading={loading} type={'submit'} variant={'contained'}>Add Dish</Button>
+
+      <Button loading={loading} type="submit" variant="contained">
+        Save
+      </Button>
     </form>
   );
 };

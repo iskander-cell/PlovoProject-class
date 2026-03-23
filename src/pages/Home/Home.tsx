@@ -1,52 +1,49 @@
-import {useCallback, useEffect, useState} from 'react';
-import type {IDish, IDishList} from '../../types.ts';
-import { axiosApi } from '../../axiosApi.ts';
-import { DishCatd } from '../../components/DishCard/DishCard.tsx';
+import { useCallback, useEffect, useState } from 'react';
+import type { IDish, IDishList } from '../../types';
+import { axiosApi } from '../../axiosApi';
+import { DishCard } from '../../components/DishCard/DishCard';
 import { Typography } from '@mui/material';
-import styles from './styles.module.css'
+import styles from './styles.module.css';
+
 export const Home = () => {
   const [dishes, setDishes] = useState<IDish[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchDishes = useCallback(async () => {
     try {
-      setLoading(true); 
-      const dishesResponse = await axiosApi.get<IDishList | null>('/dishes.json'); 
-      const dishes = dishesResponse.data; 
+      setLoading(true);
 
-      if (!dishes) {
-        return;
-      }
-      const newDishes:IDish[] = Object.keys(dishes).map(key => {
-        const dish = dishes[key];
-        return {
-          ...dish,
-          id: key,
-        };
-      });
-      setDishes(newDishes );
+      const response = await axiosApi.get<IDishList | null>('/dishes.json');
+      const data = response.data;
+
+      if (!data) return;
+
+      const dishesArray: IDish[] = Object.keys(data).map(key => ({
+        ...data[key],
+        id: key,
+      }));
+
+      setDishes(dishesArray);
     } finally {
       setLoading(false);
     }
   }, []);
-  
+
   useEffect(() => {
-    void fetchDishes()
+    void fetchDishes();
   }, [fetchDishes]);
 
   return (
     <div>
-        <Typography component='h1' align='center'>
-            Dishes list:
-        </Typography>
-        <div className={styles.wrapper}>
-            {
-            dishes.map((dishItem)=> (
-                <DishCatd dish={dishItem} key={dishItem.id} />
-            ))
-     }
-        </div>
+      <Typography align='center' variant='h4'>
+        Dishes list
+      </Typography>
+
+      <div className={styles.wrapper}>
+        {dishes.map(dish => (
+          <DishCard key={dish.id} dish={dish} />
+        ))}
+      </div>
     </div>
   );
 };
-
