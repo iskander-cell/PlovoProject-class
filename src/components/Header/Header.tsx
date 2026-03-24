@@ -5,40 +5,40 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import FastfoodIcon from '@mui/icons-material/Fastfood';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 export const Header = () => {
+  const navigate = useNavigate();
 
-    const navigator = useNavigate();
-    
-    const goHome = () => {
-      navigator('/')
-    }
-
-    const goAddDish = () => {
-      navigator(`/dish/create`)
-    }
-    return (
+  return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
+
           <IconButton
             size="large"
             edge="start"
             color="inherit"
-            aria-label="menu"
             sx={{ mr: 2 }}
-            onClick={goHome}
+            onClick={() => navigate('/')}
           >
             <FastfoodIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Plovo
           </Typography>
-          <Button color="inherit">Login</Button>
-          <Button color="inherit" onClick={goAddDish}>Add Dish</Button>
+
+          <Button color="inherit" onClick={() => navigate('/cart')}>
+            Basket
+          </Button>
+
+          <Button color="inherit" onClick={() => navigate('/dish/create')}>
+            Add Dish
+          </Button>
+
         </Toolbar>
       </AppBar>
     </Box>
   );
-}
+};
